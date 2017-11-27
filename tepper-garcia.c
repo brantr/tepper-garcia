@@ -31,8 +31,9 @@ double voigt_a(double lam_i, double b, double Gamma_i)
   //lam and lam_i in Angstrom
   //Gamma_i is Einstein A?
   double c = 2.99792458e5; //km/sec
-  double Delta_lambda_D = (b/c)*lam_i;
-  return lam_i*(lam_i*1e-13*Gamma_i)/(4*M_PI*c*Delta_lambda_D);
+  double l_km = lam_i * 1.0e-13;
+  double Delta_lambda_D = (b/c)*lam_i; //angstrom
+  return lam_i*(l_km)*Gamma_i/(4*M_PI*c*Delta_lambda_D);
 }
 double voigt_Ca(double lam_i, double b, double f_i)
 {
@@ -64,19 +65,21 @@ double voigt_H(double x, void *params)
   //
   double x2 = x*x;
   double H0 = exp(-1.*x2);
-  double Q  = 1.5*x2;
+  double Q  = 1.5/x2;
   double *pa = (double *) params;
   double a = *pa;
-  //double A = a/sqrt(M_PI)/x2 * (H0*H0*(4*x2*x2 + 7*x2 + 4 + Q) - Q -1.);
+  double A = a/sqrt(M_PI)/x2 * (H0*H0*(4*x2*x2 + 7*x2 + 4 + Q) - Q -1.);
   double ans;
-  double sh = sinh(x2);
 
-  double Kx = 0.5/x2*((4*x2+3)*(x2+1)*H0 - (1./x2)*(2*x2 +3)*sh);
 
-  ans = H0*(1-2*a/sqrt(M_PI)*Kx);
-  printf("H0 %e x2 %e sh %e Kx %e\n",H0,x2,sh,Kx);
+  //double sh = sinh(x2);
+
+  //double Kx = 0.5/x2*((4*x2+3)*(x2+1)*H0 - (1./x2)*(2*x2 +3)*sh);
+
+  //ans = H0*(1-2*a/sqrt(M_PI)*Kx);
+  //printf("H0 %e x2 %e sh %e Kx %e\n",H0,x2,sh,Kx);
   //printf("H0 %e a %e x2 %e A %e H0-A %e\n",H0, a, x2,A, H0-A);
-  //ans = H0 - A;
+  ans = H0 - A;
   //printf("H0 %e a %e x2 %e ans %e\n",H0, a, x2, ans);
   return ans;
 
